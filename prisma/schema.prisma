@@ -1,0 +1,77 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id          Int                @id @default(autoincrement())
+  slug        String             @unique
+  name        String
+  description String
+  links       ProfessionalLink[]
+  skills      Skill[]
+  experience  Experience[]
+  projects    Project[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@map("profiles")
+}
+
+model ProfessionalLink {
+  id        Int     @id @default(autoincrement())
+  label     String
+  url       String
+  sortOrder Int     @default(0)
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, url])
+  @@index([profileId, sortOrder])
+  @@map("professional_links")
+}
+
+model Skill {
+  id        Int     @id @default(autoincrement())
+  name      String
+  sortOrder Int     @default(0)
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, name])
+  @@index([profileId, sortOrder])
+  @@map("skills")
+}
+
+model Experience {
+  id           Int      @id @default(autoincrement())
+  company      String
+  position     String
+  period       String
+  achievements String[] @default([])
+  sortOrder    Int      @default(0)
+  profileId    Int
+  profile      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+  @@map("experience")
+}
+
+model Project {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  url         String
+  sortOrder   Int     @default(0)
+  profileId   Int
+  profile     Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, url])
+  @@index([profileId, sortOrder])
+  @@map("projects")
+}

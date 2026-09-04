@@ -1,0 +1,17 @@
+services:
+  database:
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  app:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules
+
+volumes:
+  node-modules:

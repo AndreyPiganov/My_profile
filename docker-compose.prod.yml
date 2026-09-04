@@ -1,0 +1,17 @@
+services:
+  database:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD for production}
+    restart: unless-stopped
+
+  migrate:
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-profile}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD for production}@database:5432/${POSTGRES_DB:-profile}?schema=public
+
+  app:
+    build:
+      target: production
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-profile}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD for production}@database:5432/${POSTGRES_DB:-profile}?schema=public
+    restart: unless-stopped

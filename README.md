@@ -1,98 +1,137 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Digital Business Card API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend-приложение моей цифровой визитки. Мой API предоставляет профиль, профессиональные ссылки, навыки, опыт и проекты через GraphQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Стек
 
-## Description
+- TypeScript и Node.js;
+- NestJS;
+- GraphQL и Apollo Server;
+- Prisma ORM и PostgreSQL;
+- Winston;
+- Docker и Docker Compose.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Быстрый запуск
 
-## Project setup
+Создайте локальный файл окружения:
 
 ```bash
-$ npm install
+cp .env.example .env
 ```
 
-## Compile and run the project
+Запустите development-окружение:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose up --build
 ```
 
-## Run tests
+При запуске Compose автоматически:
+
+1. поднимает PostgreSQL и ждёт успешного healthcheck;
+2. применяет Prisma migrations;
+3. выполняет идемпотентный seed;
+4. запускает NestJS-приложение.
+
+После старта доступны:
+
+- Apollo Sandbox: <http://localhost:3000/graphql>;
+- healthcheck: <http://localhost:3000/health>;
+- информация о приложении: <http://localhost:3000/>.
+
+## Makefile
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+make up      # собрать и запустить development-окружение
+make down    # остановить окружение
+make logs    # показать логи приложения
+make seed    # применить миграции и повторно заполнить базу
+make test    # запустить unit- и e2e-тесты
+make check   # проверить форматирование, lint, сборку и тесты
 ```
 
-## Deployment
+## GraphQL
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Пример запроса:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```graphql
+query GetProfile {
+  profile {
+    name
+    description
+    links {
+      label
+      url
+    }
+    skills {
+      name
+    }
+    experience {
+      company
+      position
+      period
+      achievements
+    }
+    projects {
+      name
+      description
+      url
+    }
+  }
+}
+```
+
+Получение профиля по `slug`:
+
+```graphql
+query GetProfileBySlug($slug: String!) {
+  profileBySlug(slug: $slug) {
+    slug
+    name
+    description
+  }
+}
+```
+
+Variables:
+
+```json
+{
+  "slug": "andrey-piganov"
+}
+```
+
+## Локальный запуск без Docker
+
+Требуются Node.js 22.12+ и PostgreSQL.
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm ci
+cp .env.example .env
+npm run prisma:migrate:deploy
+npm run prisma:seed
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Проверки
 
-## Resources
+```bash
+make check
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Архитектура
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```text
+src/
+├── common/interceptors/       # сквозное HTTP, GraphQL и RPC логирование
+├── config/                    # конфигурация, environment validation, Winston
+├── generated/prisma/          # генерируемый Prisma Client
+└── modules/
+    ├── app/                   # composition root и служебные HTTP endpoints
+    ├── database/              # жизненный цикл Prisma Client
+    └── profile/               # GraphQL resolver, бизнес-логика и API models
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+prisma/
+├── migrations/                # версионируемая схема базы данных
+├── schema.prisma
+└── seed.ts
+```

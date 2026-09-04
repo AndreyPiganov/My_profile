@@ -1,0 +1,14 @@
+import { defineConfig } from 'prisma/config';
+
+const developmentDatabaseUrl = 'postgresql://profile:profile@localhost:5432/profile?schema=public';
+
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  migrations: {
+    path: 'prisma/migrations',
+    seed: 'ts-node --transpile-only prisma/seed.ts',
+  },
+  datasource: {
+    url: process.env.DATABASE_URL ?? developmentDatabaseUrl,
+  },
+});
