@@ -4,6 +4,10 @@ Backend-приложение цифровой визитки Андрея Пиг
 
 **Задеплоенный проект:** [my-profile-puce-five.vercel.app/graphql](https://my-profile-puce-five.vercel.app/graphql)
 
+**Исходный код:** [github.com/AndreyPiganov/My_profile](https://github.com/AndreyPiganov/My_profile)
+
+**Актуальное резюме:** [HeadHunter](https://spb.hh.ru/resume/8a23c242ff11401f930039ed1f424774535077?hhtmFrom=profile)
+
 ## Технологии
 
 - TypeScript, Node.js 22 и NestJS;
