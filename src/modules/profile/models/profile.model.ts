@@ -19,14 +19,14 @@ export class ProfileModel {
   description!: string;
 
   @Field(() => [ProfessionalLinkModel])
-  links!: ProfessionalLinkModel[];
+  links?: ProfessionalLinkModel[];
 
   @Field(() => [SkillModel])
-  skills!: SkillModel[];
+  skills?: SkillModel[];
 
   @Field(() => [ExperienceModel])
-  experience!: ExperienceModel[];
+  experience?: ExperienceModel[];
 
   @Field(() => [ProjectModel])
-  projects!: ProjectModel[];
+  projects?: ProjectModel[];
 }
